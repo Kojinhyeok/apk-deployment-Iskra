@@ -21,13 +21,13 @@ jobs:
     - name: Install dependencies
       run: |
         python -m venv venv
-        source venv/Scripts/activate
+        venv\Scripts\activate
         pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: Build with PyInstaller
       run: |
-        source venv/Scripts/activate
+        venv\Scripts\activate
         pyinstaller run.spec
 
     - name: Archive build artifacts
