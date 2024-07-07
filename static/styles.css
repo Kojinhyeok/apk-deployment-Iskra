@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h1 {
+    text-align: center;
+    color: #333333;
+}
+
+.form-group {
+    margin-bottom: 10px; /* 간격을 줄였습니다 */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333333;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="certification"],
+input[type="number"] {
+    width: calc(100% - 22px);
+    padding: 8px; /* 패딩을 줄였습니다 */
+    margin-bottom: 5px; /* 마진을 줄였습니다 */
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.keyword-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px; /* 간격을 줄였습니다 */
+}
+
+.keyword-group input[type="text"] {
+    width: 50%;
+    margin-right: 5px; /* 간격을 줄였습니다 */
+}
+
+.keyword-group select {
+    width: 30%;
+    padding: 8px; /* 패딩을 줄였습니다 */
+    margin-right: 5px; /* 간격을 줄였습니다 */
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.keyword-group button {
+    padding: 8px; /* 패딩을 줄였습니다 */
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 14px; /* 폰트 크기를 줄였습니다 */
+    cursor: pointer;
+}
+
+.keyword-group button:hover {
+    background-color: #45a049;
+}
+
+.scrape-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.scrape-button:hover {
+    background-color: #45a049;
+}
