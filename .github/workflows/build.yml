@@ -1,0 +1,29 @@
+name: Build and Package for MacOS
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install flask selenium pyinstaller
+    - name: Build
+      run: |
+        source venv/bin/activate
+        pyinstaller --onefile --add-data "templates:templates" --add-data "static:static" run.py
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: macos-build
+        path: dist/
