@@ -30,7 +30,7 @@ jobs:
     - name: Build executable with PyInstaller
       run: |
         source venv/bin/activate
-        pyinstaller --onefile --windowed run.spec
+        pyinstaller run.spec
 
     - name: Upload executable
       uses: actions/upload-artifact@v3
