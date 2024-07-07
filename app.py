@@ -1,3 +1,5 @@
+import os
+import sys
 from flask import Flask, render_template, request, redirect, url_for
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -7,15 +9,18 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException,
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
-import os
 import urllib.parse
 
 app = Flask(__name__)
 
-# ChromeDriver 절대 경로 설정
-chrome_driver_path = os.path.join(os.getcwd(), 'chromedriver.exe')
+def get_chromedriver_path():
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, 'chromedriver.exe')
+    return 'chromedriver.exe'
+
+chrome_driver_path = get_chromedriver_path()
 
 def login_to_twitter(driver, username_input, password_input, certification_input, max_retries=3):
     retries = 0
@@ -34,7 +39,6 @@ def login_to_twitter(driver, username_input, password_input, certification_input
             time.sleep(1)
 
             try:
-                # 인증 코드 입력 단계 확인
                 auth_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, 'text')))
                 auth_input.clear()
                 auth_input.send_keys(certification_input)
@@ -43,7 +47,6 @@ def login_to_twitter(driver, username_input, password_input, certification_input
                 auth_next_button.click()
 
             except (NoSuchElementException, TimeoutException):
-                # 인증 코드 입력 단계가 없는 경우
                 pass
 
             WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.NAME, 'password')))
@@ -88,6 +91,10 @@ def scrape():
         if not logged_in:
             return render_template('finish.html', message="Failed to log in to Twitter after multiple attempts.")
 
+        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date() if start_date else None
+        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date() if end_date else None
+        tweet_data = []
+
         search_query = []
 
         for keyword, keyword_type in zip(keywords, keyword_types):
@@ -103,10 +110,10 @@ def scrape():
                 else:
                     search_query.append(keyword)
 
-        if start_date:
+        if start_date_obj:
             search_query.append(f'since:{start_date}')
 
-        if end_date:
+        if end_date_obj:
             search_query.append(f'until:{end_date}')
 
         if min_likes:
@@ -125,7 +132,11 @@ def scrape():
         print(search_url)  # 디버깅을 위해 URL을 출력
         driver.get(search_url)
 
-        tweet_data = []
+        try:
+            WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, '//div[@data-testid="cellInnerDiv"]')))
+        except TimeoutException:
+            return render_template('finish.html', message=f"No tweets found for the given criteria.")
+
         collected_tweets = set()
         scroll_pause_time = 7
         last_height = driver.execute_script("return document.body.scrollHeight")
@@ -172,7 +183,7 @@ def scrape():
                         except NoSuchElementException:
                             replies_count = "0"
 
-                        if not start_date or (start_date <= date_str <= end_date):
+                        if not start_date_obj or start_date_obj <= tweet_date <= end_date_obj:
                             tweet_info = {
                                 "UserName": username,
                                 "Date": date_str,
