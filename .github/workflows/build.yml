@@ -1,16 +1,17 @@
-name: Build and Package for Windows
+name: Build and Package for MacOS
 
-on:
-  push:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: windows-latest
+  build_mac:
+    runs-on: macos-latest
+
+    strategy:
+      matrix:
+        arch: [arm64, x86_64]
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Set up Python
@@ -21,17 +22,18 @@ jobs:
     - name: Install dependencies
       run: |
         python -m venv venv
-        venv\Scripts\activate
-        python -m pip install --upgrade pip
+        source venv/bin/activate
+        pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pyinstaller
 
-    - name: Build with PyInstaller
+    - name: Build executable with PyInstaller
       run: |
-        venv\Scripts\activate
-        pyinstaller run.spec
+        source venv/bin/activate
+        pyinstaller --onefile --windowed run.spec
 
-    - name: Archive build artifacts
+    - name: Upload executable
       uses: actions/upload-artifact@v3
       with:
-        name: windows-build
-        path: dist/
+        name: macos-executable-${{ matrix.arch }}
+        path: dist/run
