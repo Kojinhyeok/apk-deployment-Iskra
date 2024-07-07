@@ -4,35 +4,28 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.9'  # 원하는 Python 버전으로 변경
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.8'  # 필요에 따라 Python 버전 변경 가능
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
+    - name: Install dependencies
+      run: |
+        python -m venv venv
+        venv\Scripts\activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Build executable with PyInstaller
-        run: |
-          pyinstaller run.spec
-
-      - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows-build
-          path: dist/
+    - name: Build executable with PyInstaller
+      run: |
+        venv\Scripts\activate
+        pyinstaller run.spec
