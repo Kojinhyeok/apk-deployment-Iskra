@@ -10,22 +10,28 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: '3.8'  # 필요에 따라 Python 버전 변경 가능
+        python-version: '3.8'
 
     - name: Install dependencies
       run: |
         python -m venv venv
-        venv\Scripts\activate
+        source venv/Scripts/activate
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Build executable with PyInstaller
+    - name: Build with PyInstaller
       run: |
-        venv\Scripts\activate
+        source venv/Scripts/activate
         pyinstaller run.spec
+
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-build
+        path: dist/
