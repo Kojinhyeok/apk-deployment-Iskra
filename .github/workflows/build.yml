@@ -13,6 +13,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Remove existing venv
+      run: |
+        if (Test-Path -Path "venv") { Remove-Item -Recurse -Force "venv" }
+
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
