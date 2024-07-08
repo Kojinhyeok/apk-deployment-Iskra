@@ -6,7 +6,7 @@ import os
 # Determine the target architecture
 arch = platform.machine()
 
-# Include chromedriver based on the architecture
+# Define the path to chromedriver based on architecture
 chromedriver = 'chromedriver_mac_arm' if arch == 'arm64' else 'chromedriver_mac_x'
 
 a = Analysis(
