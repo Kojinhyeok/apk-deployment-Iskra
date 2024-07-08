@@ -1,6 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import platform
+import os
 
 # Determine the target architecture
 arch = platform.machine()
@@ -24,9 +25,8 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
-    a.binaries,
-    a.datas,
     [],
+    exclude_binaries=True,
     name=f'run_{arch}',
     debug=False,
     bootloader_ignore_signals=False,
@@ -51,4 +51,5 @@ coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name=f'run_{arch}',
+    outdir=f'dist/run_{arch}',
 )
