@@ -21,10 +21,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv venv
+          arch -x86_64 python -m venv venv
           source venv/bin/activate
-          pip install -r requirements.txt
-          pip install pyinstaller
+          arch -x86_64 pip install -r requirements.txt
+          arch -x86_64 pip install pyinstaller
 
       - name: Build executable for x86_64
         run: |
@@ -51,10 +51,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m venv venv
+          arch -arm64 python -m venv venv
           source venv/bin/activate
-          pip install -r requirements.txt
-          pip install pyinstaller
+          arch -arm64 pip install -r requirements.txt
+          arch -arm64 pip install pyinstaller
 
       - name: Build executable for arm64
         run: |
