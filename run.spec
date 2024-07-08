@@ -6,8 +6,8 @@ a = Analysis(
     ['run.py'],
     pathex=[],
     binaries=[
-        ('chromedriver_mac_arm', 'chromedriver_mac_arm'),
-        ('chromedriver_mac_x', 'chromedriver_mac_x')
+        ('chromedriver_mac_arm', '.'),
+        ('chromedriver_mac_x', '.')
     ],
     datas=[('templates', 'templates'), ('static', 'static')],
     hiddenimports=[],
