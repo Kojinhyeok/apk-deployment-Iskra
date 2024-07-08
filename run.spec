@@ -26,7 +26,7 @@ exe = EXE(
     pyz,
     a.scripts,
     [],
-    exclude_binaries=True,
+    exclude_binaries=False,  # 모든 바이너리를 포함시킴
     name=f'run_{arch}',
     debug=False,
     bootloader_ignore_signals=False,
@@ -51,5 +51,4 @@ coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name=f'run_{arch}',
-    outdir=f'dist/run_{arch}',
 )
