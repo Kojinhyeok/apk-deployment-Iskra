@@ -6,14 +6,9 @@ on:
       - main
 
 jobs:
-  build:
+  build_x86_64:
     runs-on: macos-latest
-
-    strategy:
-      matrix:
-        include:
-          - arch: x86_64
-          - arch: arm64
+    name: Build for x86_64
 
     steps:
       - name: Checkout repository
@@ -31,19 +26,74 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
-      - name: Build executable
+      - name: Build executable for x86_64
         run: |
           source venv/bin/activate
-          pyinstaller run.spec
+          arch -x86_64 pyinstaller run.spec
+
+      - name: Archive x86_64 build
+        run: |
+          mkdir -p dist/x86_64
+          mv dist/run_x86_64 dist/x86_64/run
+
+  build_arm64:
+    runs-on: macos-latest
+    name: Build for arm64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build executable for arm64
+        run: |
+          source venv/bin/activate
+          arch -arm64 pyinstaller run.spec
+
+      - name: Archive arm64 build
+        run: |
+          mkdir -p dist/arm64
+          mv dist/run_arm64 dist/arm64/run
+
+  create_universal_binary:
+    runs-on: macos-latest
+    needs: [build_x86_64, build_arm64]
+    name: Create Universal Binary
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Extract x86_64 build
+        run: |
+          mkdir -p dist/x86_64
+          tar -xvf dist/x86_64.tar -C dist/x86_64
+
+      - name: Extract arm64 build
+        run: |
+          mkdir -p dist/arm64
+          tar -xvf dist/arm64.tar -C dist/arm64
 
       - name: Create universal binary
         run: |
-          lipo -create -output dist/run dist/run_x86_64 dist/run_arm
+          lipo -create -output dist/run dist/x86_64/run dist/arm64/run
 
-      - name: Archive
+      - name: Archive universal binary
         run: |
           mkdir -p output
           zip -r output/macos-executable-universal.zip dist/run
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:

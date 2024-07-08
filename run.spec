@@ -1,7 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import platform
-import os
 
 a = Analysis(
     ['run.py'],
@@ -24,7 +23,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='run',
+    name=f'run_{platform.machine()}',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -38,9 +37,3 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
-
-# Custom build for arm64
-if platform.machine() == 'arm64':
-    exe.name = 'run_arm'
-else:
-    exe.name = 'run_x86_64'
