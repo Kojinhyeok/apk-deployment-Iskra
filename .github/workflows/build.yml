@@ -1,44 +1,51 @@
 name: Build and Package for MacOS
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  build_mac:
+  build:
     runs-on: macos-latest
 
     strategy:
       matrix:
-        arch: [arm64, x86_64]
+        include:
+          - arch: x86_64
+          - arch: arm64
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.8'
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
 
-    - name: Install dependencies
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pyinstaller
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          pip install pyinstaller
 
-    - name: Make chromedriver executable
-      run: |
-        chmod +x chromedriver_mac_arm
-        chmod +x chromedriver_mac_x
+      - name: Build executable
+        run: |
+          source venv/bin/activate
+          pyinstaller --onefile --name run --distpath dist/${{ matrix.arch }} --workpath build/${{ matrix.arch }} run.spec
 
-    - name: Build executable with PyInstaller
-      run: |
-        source venv/bin/activate
-        pyinstaller run.spec
+      - name: Create universal binary
+        run: |
+          lipo -create -output dist/run dist/x86_64/run dist/arm64/run
 
-    - name: Upload executable
-      uses: actions/upload-artifact@v3
-      with:
-        name: macos-executable-${{ matrix.arch }}
-        path: dist/run
+      - name: Archive
+        run: |
+          mkdir -p output
+          zip -r output/macos-executable-universal.zip dist/run
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-executable-universal
+          path: output/macos-executable-universal.zip
