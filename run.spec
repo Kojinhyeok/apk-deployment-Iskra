@@ -1,6 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import platform
+import os
+
+# Determine the target architecture
+arch = platform.machine()
 
 a = Analysis(
     ['run.py'],
@@ -15,6 +19,7 @@ a = Analysis(
     noarchive=False,
     optimize=0,
 )
+
 pyz = PYZ(a.pure)
 
 exe = EXE(
@@ -23,7 +28,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name=f'run_{platform.machine()}',
+    name=f'run_{arch}',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -36,4 +41,19 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+)
+
+# Set the target path based on the architecture
+dist_path = os.path.join('dist', f'run_{arch}')
+
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name=f'run_{arch}',
+    distpath=dist_path,
 )
