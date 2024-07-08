@@ -34,11 +34,11 @@ jobs:
       - name: Build executable
         run: |
           source venv/bin/activate
-          pyinstaller --onefile --name run --distpath dist/${{ matrix.arch }} --workpath build/${{ matrix.arch }} run.spec
+          pyinstaller run.spec
 
       - name: Create universal binary
         run: |
-          lipo -create -output dist/run dist/x86_64/run dist/arm64/run
+          lipo -create -output dist/run dist/run_x86_64 dist/run_arm
 
       - name: Archive
         run: |

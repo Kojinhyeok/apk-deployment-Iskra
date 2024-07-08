@@ -1,14 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-block_cipher = None
+import platform
+import os
 
 a = Analysis(
     ['run.py'],
     pathex=[],
-    binaries=[
-        ('chromedriver_mac_arm', '.'),
-        ('chromedriver_mac_x', '.')
-    ],
+    binaries=[],
     datas=[('templates', 'templates'), ('static', 'static')],
     hiddenimports=[],
     hookspath=[],
@@ -16,27 +14,33 @@ a = Analysis(
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
+    optimize=0,
 )
 pyz = PYZ(a.pure)
+
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,
+    a.datas,
     [],
-    exclude_binaries=True,
     name='run',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
-    console=True,
-)
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
     upx_exclude=[],
-    name='run'
+    runtime_tmpdir=None,
+    console=True,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
 )
+
+# Custom build for arm64
+if platform.machine() == 'arm64':
+    exe.name = 'run_arm'
+else:
+    exe.name = 'run_x86_64'
