@@ -34,7 +34,7 @@ jobs:
       - name: Archive x86_64 build
         run: |
           mkdir -p dist/x86_64
-          mv dist/run_x86_64 dist/x86_64/run
+          cp dist/run_x86_64 dist/x86_64/run
           tar -cvf dist/x86_64.tar -C dist/x86_64 .
 
       - name: Upload x86_64 artifact
@@ -71,7 +71,7 @@ jobs:
       - name: Archive arm64 build
         run: |
           mkdir -p dist/arm64
-          mv dist/run_arm64 dist/arm64/run
+          cp dist/run_arm64 dist/arm64/run
           tar -cvf dist/arm64.tar -C dist/arm64 .
 
       - name: Upload arm64 artifact
@@ -86,6 +86,9 @@ jobs:
     name: Create Universal Binary
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Download x86_64 artifact
         uses: actions/download-artifact@v3
         with:

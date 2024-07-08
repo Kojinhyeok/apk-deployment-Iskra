@@ -1,7 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import platform
-import os
 
 # Determine the target architecture
 arch = platform.machine()
@@ -43,9 +42,6 @@ exe = EXE(
     entitlements_file=None,
 )
 
-# Set the target path based on the architecture
-dist_path = os.path.join('dist', f'run_{arch}')
-
 coll = COLLECT(
     exe,
     a.binaries,
@@ -55,5 +51,4 @@ coll = COLLECT(
     upx=True,
     upx_exclude=[],
     name=f'run_{arch}',
-    distpath=dist_path,
 )
