@@ -6,10 +6,13 @@ import os
 # Determine the target architecture
 arch = platform.machine()
 
+# Include chromedriver based on the architecture
+chromedriver = 'chromedriver_mac_arm' if arch == 'arm64' else 'chromedriver_mac_x'
+
 a = Analysis(
     ['run.py'],
     pathex=[],
-    binaries=[],
+    binaries=[(chromedriver, '.')],  # Include the chromedriver binary
     datas=[('templates', 'templates'), ('static', 'static')],
     hiddenimports=[],
     hookspath=[],
@@ -26,7 +29,7 @@ exe = EXE(
     pyz,
     a.scripts,
     [],
-    exclude_binaries=False,  # 모든 바이너리를 포함시킴
+    exclude_binaries=False,  # Include all binaries
     name=f'run_{arch}',
     debug=False,
     bootloader_ignore_signals=False,
